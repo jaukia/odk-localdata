@@ -3,4 +3,8 @@
 * nodebox requires requires "svg" library
 * "svg" library needs to be hacked, use the hacked version by jonatan instead "hacked-svg-lib"
 
-* 
+* data sources:
+- "102.csv", source: "Helsinki_alueittain2011.xls"
+- "102_voting.csv", source: "parlimaentary_elections_helsinkiData_15.8.xls"
+- "102_population.csv", source: "Helsinki_alueittain2011.xls"
+- "102_languages.csv", source: "VŠestš-Šidinkieli-2011.xlsx"
