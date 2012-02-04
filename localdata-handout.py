@@ -354,7 +354,7 @@ def hz_hairline(y):
     
 # ///////////////// BUILDING THE VISUALISATION ////////////////////
 
-district = "Ullanlinna"
+district = "102"
 
 
 keyfigures = Reader(u"region-data/"+ district + ".csv")
