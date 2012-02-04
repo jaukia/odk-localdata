@@ -55,24 +55,20 @@ class Reader:
 # ------------ plotting functions -------------
 
 # Simple line graph
-def plot_line_horizontal(datarow, x, y, value_scale, spacing, min_y=0, max_y=0): 
+def plot_line_horizontal(datarow, x, y, value_scale, spacing, range=10000, height=80): 
     points = []
     xs = 0
-    maxval = max_y
-    if max_y==0: maxval = int(max(datarow))
+    print sum(datarow)
+    average = float(sum(datarow)) / float(len(datarow))
+    
+    maxval = int(max(datarow))
+    minval = int(min(datarow))
     
     for entry in datarow:
-        try: 
             entry = float(entry)
             ypos = (entry-min_y)*value_scale
             points.append(Point(xs, ypos))
             xs +=spacing
-        
-        except ValueError:
-            align(RIGHT)
-           # entry = entry.decode("utf-8")
-           # text(entry, x, y+fontsize()/2, width=textfield)
-            #translate(0, bar_height+h_spacing)
     push()
 
     translate(x, y)
@@ -458,7 +454,7 @@ curRow = None
 for row in popproject.rows:
     if(row[0] == district): curRow = row
 
-plot_line_horizontal(curRow[1:], leftmargin+350, baseline1+30, 0.008, 5, 20000, 25000)
+plot_line_horizontal(curRow[1:], leftmargin+350, baseline1+30, 0.008, 5)
 
 vuodet=[1, 10, 20, 27, 35]
 for vuosi in vuodet:
