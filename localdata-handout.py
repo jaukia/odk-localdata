@@ -314,20 +314,23 @@ def drawpaths(paths=[], x=0, y=0, rotate=0, scale=1, origin=(0, 0)):
 
 # ------------ Typography -------------
 
-def header(txt, x, y, typeface="AG Schoolbook Medium A", fontsz=25, fillcolor=textfill):
+type_normal = "PT Sans"
+type_bold = "PT Sans Bold"
+
+def header(txt, x, y, typeface=type_bold, fontsz=25, fillcolor=textfill):
     fill(fillcolor)
     font(typeface, fontsz)
     text(txt, x, y)
     return textheight(txt) 
 
-def selite(txt, x, y, typeface="AG Schoolbook Regular A", fontsz=10, fillcolor=textfill):
+def selite(txt, x, y, typeface=type_normal, fontsz=10, fillcolor=textfill):
     fill(fillcolor)
 
     font(typeface, fontsz)
     text(txt, x, y)
     return textheight(txt) 
     
-def selite_align(txt, x, y, typeface="AG Schoolbook Regular A", fontsz=8, al=RIGHT, width=50, fillcolor=textfill):
+def selite_align(txt, x, y, typeface=type_normal, fontsz=8, al=RIGHT, width=50, fillcolor=textfill):
     fill(fillcolor)
 
     align(al)
@@ -337,7 +340,7 @@ def selite_align(txt, x, y, typeface="AG Schoolbook Regular A", fontsz=8, al=RIG
     
     
 
-def selite_bold(txt, x, y, typeface="AG Schoolbook Medium A", fontsz=10, fillcolor=textfill):
+def selite_bold(txt, x, y, typeface=type_bold, fontsz=10, fillcolor=textfill):
     fill(fillcolor)
 
     font(typeface, fontsz)
