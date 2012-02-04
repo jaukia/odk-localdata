@@ -357,7 +357,7 @@ def hz_hairline(y):
     
 # ///////////////// BUILDING THE VISUALISATION ////////////////////
 
-district = "102"
+district = "103"
 
 keyfigures = Reader(u"full-data/regions.csv")
 #keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
@@ -547,7 +547,7 @@ except:
 
 # The parse() command will return
 # a list of the shapes in the SVG file.
-path_ids = svg.parse_as_dict(open("region-data/basedistricts.svg").read())
+path_ids = svg.parse_as_dict(open("full-data/basedistricts.svg").read())
 
 
 paths= path_ids[0]
