@@ -357,7 +357,7 @@ def hz_hairline(y):
     
 # ///////////////// BUILDING THE VISUALISATION ////////////////////
 
-district = "102"
+district = "703"
 
 keyfigures = Reader(u"full-data/regions.csv")
 #keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
@@ -394,7 +394,7 @@ xpos= 0
 curRow = None
 for row in regionnames.rows:
     if(row[0] == district): curRow = row
-title= curRow[1]
+title= curRow[1].decode("utf-8")
 header(title, leftmargin, 30)
 
 # --------- Helsinki population
@@ -500,10 +500,10 @@ for x in rawvalues:
 mainlanguages =  cook_percentages(values, cutoff = 2)
 seclanguages = cook_percentages(values[2:], cutoff = 8)
 
-selite(u"Puhutuimmat kielet, prosenttia väestöstä", leftmargin, baseline2-10) 
+selite(u"Kaksi puhutuinta kieltä, prosenttia väestöstä", leftmargin, baseline2-10) 
 plot_sumbar(mainlanguages, leftmargin, baseline2, 1, 400, 20, labels=labels, altfill= True)
 
-selite(u"Puhutuimmat kielet suomen ja ruotsin lisäksi", leftmargin, baseline2-10+70) 
+selite(u"Puhutuimmat muut kielet, prosenttia", leftmargin, baseline2-10+70) 
 plot_sumbar(seclanguages, leftmargin, baseline2+70, 1, 400, 20, labels=labels[2:], altfill= True)    
 
 
