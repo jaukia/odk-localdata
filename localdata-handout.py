@@ -363,15 +363,18 @@ def hz_hairline(y):
 
 district = "102"
 
+keyfigures = Reader(u"full-data/regions.csv")
+#keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
+#columnskf= keyfigures.columns
 
-keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
-columnskf= keyfigures.columns
+#popproject = Reader(u"region-data/"+ district +"_population.csv")
+popproject = Reader(u"full-data/population.csv")
 
-popproject = Reader(u"region-data/"+ district +"_population.csv")
+#languages = Reader(u"region-data/" + district + "_languages.csv")
+languages = Reader(u"full-data/languages.csv")
 
-languages = Reader(u"region-data/" + district + "_languages.csv")
-
-voting = Reader(u"region-data/" + district + "_voting.csv")
+#voting = Reader(u"region-data/" + district + "_voting.csv")
+voting = Reader(u"full-data/voting.csv")
 
 leftmargin = 5
 
@@ -390,20 +393,32 @@ unit = 1000
 
 xpos= 0
 
-
-title = keyfigures.header_row[1].decode("utf-8")
-header(title, leftmargin, 30)
+#FIXME! Add title!
+#title = keyfigures.header_row[1].decode("utf-8")
+#header(title, leftmargin, 30)
 
 
 # --------- Helsinki population
-hpop = columnskf[1][0]
 
+keyfigureData = None
+for row in keyfigures.rows:
+    if(row[0] == district): keyfigureData = row
+keyfigureLabels = keyfigures.header_row
+
+keyfigureData = keyfigureData[1:]
+keyfigureLabels = keyfigureLabels[1:]
+fullCityData = keyfigures.rows[0]
+
+print keyfigureLabels
+print keyfigureData
+
+hpop = int(fullCityData[14])
 
 selite(u"Helsingin väkiluku\n"+format_number(int(hpop)), leftmargin, baseline0-60)
 area_from_value(hpop, leftmargin, baseline0, 0.10)
 
 # Area population
-apop = columnskf[1][1]
+apop = int(keyfigureData[13])
 selite(u"Peruspiirin väkiluku\n"+format_number(int(apop)), leftmargin+120, baseline0-60)
 area_from_value(apop, leftmargin+120, baseline0, 0.10)
 
@@ -416,7 +431,12 @@ selite_bold(u"Väestö", leftmargin, baseline1-40)
 
 push()
 
- 
+15vTayttaneet = keyfigureData[...]
+yli65v = keyfigureData[...]
+15to65v = 15vTayttaneet-yli65v
+alle15v = apop-15vTayttaneet
+
+
 # Printing numbers from rows concerning age distribution
 for i in range(3,6):
     header = columnskf[0][i]
@@ -427,12 +447,18 @@ for i in range(3,6):
 
     xpos = symbols_from_value(dval, leftmargin, baseline1, unit=unit, gridw=10, gridh=20, ssize=9)
     translate(xpos +30, 0) 
+    
 pop()
 
 #---- population prediction 
 #print  popproject.rows[0][1:]  
 selite(u"Väestöennuste",  leftmargin+350, baseline1-20)  
-plot_line_horizontal(popproject.rows[0][1:], leftmargin+350, baseline1+30, 0.008, 5, 20000, 25000)
+
+curRow = None
+for row in popproject.rows:
+    if(row[0] == district): curRow = row
+
+plot_line_horizontal(curRow[1:], leftmargin+350, baseline1+30, 0.008, 5, 20000, 25000)
 
 vuodet=[1, 10, 20, 27, 35]
 for vuosi in vuodet:
@@ -450,14 +476,28 @@ hz_hairline(baseline2-55)
 
 selite_bold(u"Puhutut kielet", leftmargin, baseline2-40)  
 
-mainlanguages =  cook_percentages(languages.columns[2], cutoff = 2)
-seclanguages = cook_percentages(languages.columns[2][2:], cutoff = 8)
+curRow = None
+for row in languages.rows:
+    if(row[0] == district): curRow = row
+
+unzipped = zip(*sorted(zip(languages.header_row[2:-1], curRow[2:-1]), key=lambda x: -int(x[1])))
+labels = list(unzipped[0])
+rawvalues = list(unzipped[1])
+labels.append(languages.header_row[-1])
+rawvalues.append(curRow[-1])
+
+values = list()
+for x in rawvalues:
+    values.append(int(x))
+
+mainlanguages =  cook_percentages(values, cutoff = 2)
+seclanguages = cook_percentages(values[2:], cutoff = 8)
 
 selite(u"Puhutuimmat kielet, prosenttia väestöstä", leftmargin, baseline2-10) 
-plot_sumbar(mainlanguages, leftmargin, baseline2, 1, 400, 20, labels=languages.columns[1], altfill= True)
+plot_sumbar(mainlanguages, leftmargin, baseline2, 1, 400, 20, labels=labels, altfill= True)
 
 selite(u"Puhutuimmat kielet suomen ja ruotsin lisäksi", leftmargin, baseline2-10+70) 
-plot_sumbar(seclanguages, leftmargin, baseline2+70, 1, 400, 20, labels=languages.columns[1][2:], altfill= True)    
+plot_sumbar(seclanguages, leftmargin, baseline2+70, 1, 400, 20, labels=labels[2:], altfill= True)    
 
 
 
@@ -465,16 +505,30 @@ hz_hairline(baseline3-55)
 
 #---- Voting
 
-votingresults = cook_percentages(voting.columns[1][:9], cutoff = 6)
+curRow = None
+for row in voting.rows:
+    if(row[0] == district): curRow = row
+
+unzipped = zip(*sorted(zip(voting.header_row[1:-2], curRow[1:-2]), key=lambda x: -float(x[1])))
+labels = list(unzipped[0])
+rawvalues = list(unzipped[1])
+labels.append(voting.header_row[-2])
+rawvalues.append(curRow[-2])
+
+values = list()
+for x in rawvalues:
+    values.append(float(x))
+
+votingresults = cook_percentages(values, cutoff = 6)
 print votingresults
 
 selite_bold(u"Vaalitulokset", leftmargin, baseline3-40)  
 
-votingpercentage = str(voting.columns[2][10])
+votingpercentage = str(curRow[-1])
 
 selite(u"Äänestystulokset eduskuntavaaleissa 2007, äänestysprosentti " + votingpercentage + " %", leftmargin, baseline3-10) 
 
-plot_sumbar(votingresults, leftmargin, baseline3, 1, 400, 20, labels=voting.columns[0], altfill= True)
+plot_sumbar(votingresults, leftmargin, baseline3, 1, 400, 20, labels=labels, altfill= True)
 
 
 
