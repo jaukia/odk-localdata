@@ -360,7 +360,7 @@ def hz_hairline(y):
 district = "102"
 
 
-keyfigures = Reader(u"region-data/"+ district + ".csv")
+keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
 columnskf= keyfigures.columns
 
 popproject = Reader(u"region-data/"+ district +"_population.csv")
