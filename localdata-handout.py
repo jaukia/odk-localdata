@@ -62,7 +62,7 @@ def plot_line_horizontal(datarow, x, y, value_scale, spacing, range=10000, heigh
     average = float(sum(datarow)) / float(len(datarow))
     
     maxval = int(max(datarow))
-    minval = int(min(datarow))
+    min_y = int(min(datarow))
     
     for entry in datarow:
             entry = float(entry)
@@ -405,9 +405,6 @@ keyfigureData = keyfigureData[1:]
 keyfigureLabels = keyfigureLabels[1:]
 fullCityData = keyfigures.rows[0]
 
-print keyfigureLabels
-print keyfigureData
-
 hpop = int(fullCityData[14])
 
 selite(u"Helsingin väkiluku\n"+format_number(int(hpop)), leftmargin, baseline0-60)
@@ -427,18 +424,25 @@ selite_bold(u"Väestö", leftmargin, baseline1-40)
 
 push()
 
-15vTayttaneet = keyfigureData[...]
-yli65v = keyfigureData[...]
-15to65v = 15vTayttaneet-yli65v
-alle15v = apop-15vTayttaneet
+#print keyfigureLabels
+#print keyfigureData
 
+over15 = int(keyfigureData[27])
+over65 = int(keyfigureData[20])
+from15to65 = over15-over65
+under15 = apop-over15
+
+head = ["Alle 15-v","15-65-vuotiaat","Yli 65-vuotiaat"]
+val = [under15, from15to65, over65]
 
 # Printing numbers from rows concerning age distribution
-for i in range(3,6):
-    header = columnskf[0][i]
+for i in range(0,3):
+    header = head[i]
     header = header.decode("utf-8")
-    dval = columnskf[1][i]
-
+    dval = val[i]
+    print header
+    print dval
+    
     selite(header+"\n"+format_number(int(dval)), leftmargin, baseline1-20)  
 
     xpos = symbols_from_value(dval, leftmargin, baseline1, unit=unit, gridw=10, gridh=20, ssize=9)
@@ -454,7 +458,11 @@ curRow = None
 for row in popproject.rows:
     if(row[0] == district): curRow = row
 
-plot_line_horizontal(curRow[1:], leftmargin+350, baseline1+30, 0.008, 5)
+items = []
+for item in curRow[1:]:
+    items.append(int(item))
+
+plot_line_horizontal(items, leftmargin+350, baseline1+30, 0.008, 5)
 
 vuodet=[1, 10, 20, 27, 35]
 for vuosi in vuodet:
