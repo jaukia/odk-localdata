@@ -6,10 +6,11 @@ from math import sqrt, pi, ceil
 size(210*mm, 297*mm)
 colormode(CMYK)
 
-fillclr = (0, 0, 0, 1)
-fillclr50p = (0, 0, 0, 0.5)
+fillclr = (color(1, 0, 0, 0.25))
+fillclr50p = (color(0.5, 0, 0, 0.125))
 fillclr25p = (0, 0, 0, 0.25)
-fillclr15p = (0, 0, 0, 0.15)
+fillclr15p = (color(0, 0, 0, 0.25, 0.5))
+fillclr_red = (color(0, 0.5, 0.2, 0, 0.5)) 
 
 fillclr0op = (1, 0.3)
 white = 1
@@ -167,6 +168,8 @@ def plot_sumbar(data, x, y, value_scale, width, height, labels=None, textfield=5
     
 # Area plot
 def area_from_value(value,x=0, y=0, s=1, type="C"):
+    fill(fillclr)
+
     if type=="C":
     
         d = 2*(sqrt(value/pi))
@@ -185,6 +188,7 @@ def area_from_value(value,x=0, y=0, s=1, type="C"):
 def symbols_from_value(value,x=0, y=0, s=1, unit=10, squared=False, gridw=10, gridh=10, cs=10, rs=10, ssize= 10, paths=None):
     unitvalue = float(value/unit)
     vsq =  ceil(sqrt(unitvalue))
+    fill(fillclr)
     
     if squared:
         if vsq > gridw: 
@@ -387,8 +391,7 @@ unit = 1000
 xpos= 0
 
 
-
-title = columnskf[0][0].decode("utf-8")
+title = keyfigures.header_row[1].decode("utf-8")
 header(title, leftmargin, 30)
 
 
@@ -416,12 +419,10 @@ push()
  
 # Printing numbers from rows concerning age distribution
 for i in range(3,6):
-    print i
     header = columnskf[0][i]
     header = header.decode("utf-8")
     dval = columnskf[1][i]
 
-    
     selite(header+"\n"+format_number(int(dval)), leftmargin, baseline1-20)  
 
     xpos = symbols_from_value(dval, leftmargin, baseline1, unit=unit, gridw=10, gridh=20, ssize=9)
@@ -429,7 +430,7 @@ for i in range(3,6):
 pop()
 
 #---- population prediction 
-print  popproject.rows[0][1:]  
+#print  popproject.rows[0][1:]  
 selite(u"Väestöennuste",  leftmargin+350, baseline1-20)  
 plot_line_horizontal(popproject.rows[0][1:], leftmargin+350, baseline1+30, 0.008, 5, 20000, 25000)
 
@@ -514,7 +515,7 @@ drawpath(paths[0])
 
 stroke(1)
 strokewidth(35)
-selectedclr = fillclr25p
+selectedclr = fillclr_red
 fill(selectedclr)
 p = (paths[index])
 
