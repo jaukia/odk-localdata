@@ -357,7 +357,7 @@ def hz_hairline(y):
     
 # ///////////////// BUILDING THE VISUALISATION ////////////////////
 
-district = "103"
+district = "102"
 
 keyfigures = Reader(u"full-data/regions.csv")
 #keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
@@ -371,6 +371,8 @@ languages = Reader(u"full-data/languages.csv")
 
 #voting = Reader(u"region-data/" + district + "_voting.csv")
 voting = Reader(u"full-data/voting.csv")
+
+regionnames = Reader(u"full-data/region-names.csv")
 
 leftmargin = 5
 
@@ -389,10 +391,11 @@ unit = 1000
 
 xpos= 0
 
-#FIXME! Add title!
-#title = keyfigures.header_row[1].decode("utf-8")
-#header(title, leftmargin, 30)
-
+curRow = None
+for row in regionnames.rows:
+    if(row[0] == district): curRow = row
+title= curRow[1]
+header(title, leftmargin, 30)
 
 # --------- Helsinki population
 
