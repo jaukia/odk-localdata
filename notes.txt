@@ -1,0 +1,6 @@
+* spoken languages data etc need to be in decreasing order, "others" as last item
+
+* nodebox requires requires "svg" library
+* "svg" library needs to be hacked, use the hacked version by jonatan instead "hacked-svg-lib"
+
+* 
