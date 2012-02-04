@@ -395,11 +395,12 @@ header(title, leftmargin, 30)
 # --------- Helsinki population
 hpop = columnskf[1][0]
 
+
 selite(u"Helsingin väkiluku\n"+format_number(int(hpop)), leftmargin, baseline0-60)
 area_from_value(hpop, leftmargin, baseline0, 0.10)
 
 # Area population
-apop = columnskf[2][0]
+apop = columnskf[1][1]
 selite(u"Peruspiirin väkiluku\n"+format_number(int(apop)), leftmargin+120, baseline0-60)
 area_from_value(apop, leftmargin+120, baseline0, 0.10)
 
@@ -411,10 +412,14 @@ hz_hairline(baseline1-55)
 selite_bold(u"Väestö", leftmargin, baseline1-40)  
 
 push()
-for i in range(4,7):
-    header = keyfigures.header_row[i]
+
+ 
+# Printing numbers from rows concerning age distribution
+for i in range(3,6):
+    print i
+    header = columnskf[0][i]
     header = header.decode("utf-8")
-    dval = columnskf[i][0]
+    dval = columnskf[1][i]
 
     
     selite(header+"\n"+format_number(int(dval)), leftmargin, baseline1-20)  
@@ -491,8 +496,8 @@ keys= path_ids[1]
 
 
 index = keys.index(district) 
-print keys
-print index
+#print keys
+#print index
 
 
 strokewidth(25)
