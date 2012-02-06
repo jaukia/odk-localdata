@@ -57,23 +57,25 @@ class Reader:
 # ------------ plotting functions -------------
 
 # Simple line graph
-def plot_line_horizontal(datarow, x, y, value_scale, spacing, height=45, scalestep=5000, range=2000): 
+def plot_line_horizontal(datarow, x, y, value_scale, spacing, height=45, scalestep=5000.0, range=2000.0): 
     points = []
     xs = 0
-    print sum(datarow)
     average = float(sum(datarow)) / float(len(datarow))
     
-    #!FIXIT! Floor, ceil
-    maxval = int(ceil(max(datarow)+range)/scalestep)*scalestep
-    min_y = int(floor(min(datarow)-range)/scalestep)*scalestep
+    max_y = int(ceil((max(datarow)+range)/scalestep)*scalestep)
+    min_y = int(floor((min(datarow)-range)/scalestep)*scalestep)
+    if min_y<0: min_y=0
     
-    vscalef = ((maxval-min_y)*value_scale)/height
+    vscalef = ((max_y-min_y)*value_scale)/height
+
+ 
 
     
     for entry in datarow:
             entry = float(entry)
             ypos = ((entry-min_y)*value_scale)/vscalef
-            points.append(Point(xs, ypos))
+            if entry!=0:
+                points.append(Point(xs, ypos))
             xs +=spacing
     push()
 
@@ -84,8 +86,8 @@ def plot_line_horizontal(datarow, x, y, value_scale, spacing, height=45, scalest
     line(0, 0, xs-spacing, 0)
     selite_align(format_number(min_y), -55, 3)
     
-    selite_align(format_number(maxval), -55, -((maxval-min_y)*value_scale)/vscalef+3)
-    line(0, -((maxval-min_y)*value_scale/vscalef), xs-spacing, -((maxval-min_y)*value_scale)/vscalef)
+    selite_align(format_number(max_y), -55, -((max_y-min_y)*value_scale)/vscalef+3)
+    line(0, -((max_y-min_y)*value_scale/vscalef), xs-spacing, -((max_y-min_y)*value_scale)/vscalef)
 
     
     nofill()
@@ -95,6 +97,7 @@ def plot_line_horizontal(datarow, x, y, value_scale, spacing, height=45, scalest
     for point in points:
         x1=point.x
         y1=point.y
+        
         lineto(x1, -y1)
     autoclosepath(False)    
     endpath()
@@ -124,49 +127,66 @@ def plot_bar_horizontal(datacolumn, x, y, value_scale, bar_height, h_spacing, te
     
     
 # Horizontal sum bar plot
-def plot_sumbar(data, x, y, value_scale, width, height, labels=None, textfield=50, altfill=True): 
+def plot_sumbar(data, x, y, value_scale, width, height, labels=None, textfield=50, clr=fillclr, clr2=fillclr50p, altfill=True, popout=False): 
     push()
-    stroke(white)
-    fill0=fillclr
-    
+    translate(x, y)
+    nostroke()
+    fill0=clr
+    fill1=clr2
+       
     total = float(sum(data))
     ws = total/width
+    
     yshift = 0
+
+    
     for i in range(len(data)):
         entry = float(data[i])
 
-        w = (entry*value_scale)/ws
-
+        w = (entry*value_scale)/ws-1
+        
         if labels:
             label = labels[i].decode("utf-8")       
-            if i > len(data)-2:label = "muut"       # hackish way of making the last label into "others"             
+            if i > len(data)-2:label = "muut"       # hackish way of making the last label into "others" 
+         
             push()
             if w<28:
                 transform(CORNER)
-                translate(-25, y+height+45)
+                translate(-30, 0+height+45)
     
                 rotate(45)
-                selite_align(label, 0, 0, fontsz=10, width=55)
+                selite_align(label, 0, 0, fontsz=9, width=55)
             
             else: 
-                translate(5, y+height+10)
-                selite(label, 0, 0)
+                translate(0, 0+height+10)
+                selite(label, 0, 0, fontsz=9)
             pop()
                     
         # draw the bars & percentages
-        fill(fill0)  
-        rect(x, y, w, height)
-        selite_align(str(int(entry)), 8, y+height-6, al=LEFT, fillcolor=white)
+        fill(fill0) 
+        #if label == "muut": fill(0.5)
+        rect(0, 0, w, height)
+        selite_align(str(int(entry)), 2, 0+height-6, al=LEFT, fillcolor=white)
 
-        translate(w, 0)
-        if fill0==fillclr:
-            fill0= fillclr50p 
-        else: fill0=fillclr
-    selite_align("100 %", 8, y+height-6, al=LEFT, fillcolor=textfill)
+        translate(w+1, 0)
+        if fill0==clr:
+            fill0= fill1 
+        else: fill0=clr
+    selite_align("100 %", 8, 0+height-6, al=LEFT, fillcolor=textfill)
 
-        
-    pop()    
-    
+    if popout:    
+        translate(-width, 0)   
+        stroke(clr)
+        strokewidth(0.5)
+        beginpath(width-w, 0+height)
+        lineto(0,70)
+        autoclosepath(False)
+        endpath()
+        beginpath(width-1.25, 0+height)
+        lineto(width-1.25,70)
+        autoclosepath(False)
+        endpath()
+    pop()
     
 # Area plot
 def area_from_value(value,x=0, y=0, s=1, type="C"):
@@ -187,8 +207,8 @@ def area_from_value(value,x=0, y=0, s=1, type="C"):
         return
         
 # Unit figure plot        
-def symbols_from_value(value,x=0, y=0, s=1, unit=10, squared=False, gridw=10, gridh=10, cs=10, rs=10, ssize= 10, paths=None):
-    unitvalue = float(value/unit)
+def symbols_from_value(value,x=0, y=0, s=1, unit=10.0, squared=False, gridw=10, gridh=10, cs=10, rs=10, ssize= 10, paths=None):
+    unitvalue = float(value)/unit
     vsq =  ceil(sqrt(unitvalue))
     fill(fillclr)
     
@@ -198,9 +218,7 @@ def symbols_from_value(value,x=0, y=0, s=1, unit=10, squared=False, gridw=10, gr
         else:
             gridw = vsq
             gridh= vsq
-    
-    #unitvalue = int(unitvalue)
-    #print unitvalue    
+
     
     
     push()
@@ -215,9 +233,12 @@ def symbols_from_value(value,x=0, y=0, s=1, unit=10, squared=False, gridw=10, gr
         rect(x1, y1, ssize, ssize)
         x1 += cs
     
-    # add a half-unit at the end if necessary
-    if round(unitvalue-int(unitvalue))!=0:
-        rect(x1, y1, ssize/2, ssize)
+    # add a partial unit at the end if necessary
+    psize = round(unitvalue-int(unitvalue), 2)
+    
+    if round(unitvalue-int(unitvalue),2)!=0:
+      
+        rect(x1, y1, ssize*psize, ssize)
 
     # get the width of the figure
     graphwidth = gridw*cs
@@ -254,25 +275,26 @@ def format_number (n, number_format="fi"):
     if (len(suffix) > 0):
         if (number_format == "fi"): suffix = "," + s
         if (number_format == "en"): suffix = "." + s
-    for i in range (len (s) / 3):
-        if i == 0: j = len (s) - (i) * 3 - 3
-        j = len (s) - (i) * 4 - 3
-        s = s [0:j] + ":" + s [j:len (s)]
-    if (number_format == "fi"): s = s.replace (":", " ")
-    if (number_format == "en"): s = s.replace (":", ",")
+    if len(s)>3:
+        for i in range (len (s) / 3):
+            if i == 0: j = len (s) - (i) * 3 - 3
+            j = len (s) - (i) * 4 - 3
+            s = s [0:j] + ":" + s [j:len (s)]
+        if (number_format == "fi"): s = s.replace (":", " ")
+        if (number_format == "en"): s = s.replace (":", ",")
     return s + suffix    
     
 
 # preparing percentages
 
-def cook_percentages(data, decimals=1, cutoff= 6):
+def cook_percentages(data, decimals=1, cutoff= 6, minp=2):
     total = float(sum(data))
     percentages = []
     sum_cutoff = 0
     #assuming a sorted list with cathegory "others" at end
     for i in range(len(data)):
         entry = round((data[i]/total)*100, decimals)  
-        if i < cutoff:
+        if i < cutoff and entry>2:
             percentages.append(entry)
         else: sum_cutoff +=entry
     #appending summedpercentages at end of list 
@@ -363,7 +385,9 @@ def hz_hairline(y):
     
 # ///////////////// BUILDING THE VISUALISATION ////////////////////
 
-district = "703"
+
+
+
 
 keyfigures = Reader(u"full-data/regions.csv")
 #keyfigures = Reader(u"region-data/"+ district + "_regions.csv")
@@ -379,6 +403,16 @@ languages = Reader(u"full-data/languages.csv")
 voting = Reader(u"full-data/voting.csv")
 
 regionnames = Reader(u"full-data/region-names.csv")
+
+regionnumbers = regionnames.columns[0]
+
+
+
+
+district = str(int(regionnumbers[33]))
+
+print district
+
 
 leftmargin = 5
 
@@ -400,7 +434,9 @@ xpos= 0
 curRow = None
 for row in regionnames.rows:
     if(row[0] == district): curRow = row
+
 title= curRow[1].decode("utf-8")
+print title
 header(title, leftmargin, 30)
 
 # --------- Helsinki population
@@ -449,14 +485,13 @@ for i in range(0,3):
     header = head[i]
     header = header.decode("utf-8")
     dval = val[i]
-    print header
-    print dval
-    
+
+
     selite(header+"\n"+format_number(int(dval)), leftmargin, baseline1-20)  
 
     xpos = symbols_from_value(dval, leftmargin, baseline1, unit=unit, gridw=10, gridh=20, ssize=9)
-    translate(xpos +30, 0) 
-    
+    if xpos < 45: translate(xpos +55, 0) 
+    else: translate(xpos +20, 0)
 pop()
 
 #---- population prediction 
@@ -469,6 +504,7 @@ for row in popproject.rows:
 
 items = []
 for item in curRow[1:]:
+
     items.append(int(item))
 
 plot_line_horizontal(items, leftmargin+350, baseline1+30, 0.008, 5)
@@ -482,7 +518,7 @@ for vuosi in vuodet:
     rect(leftmargin+350+(27-1)*5, baseline1-14, 40, 43)
 
     selite_align(str(popproject.header_row[vuosi]), leftmargin+326+(vuosi-1)*5, baseline1+42,  al=CENTER)
-    
+
 hz_hairline(baseline2-55)
 
 #---- Languages
@@ -506,10 +542,10 @@ for x in rawvalues:
 mainlanguages =  cook_percentages(values, cutoff = 2)
 seclanguages = cook_percentages(values[2:], cutoff = 8)
 
-selite(u"Kaksi puhutuinta kieltä, prosenttia väestöstä", leftmargin, baseline2-10) 
-plot_sumbar(mainlanguages, leftmargin, baseline2, 1, 400, 20, labels=labels, altfill= True)
+selite(u"Puhutuimmat kielet, prosenttia koko väestöstä", leftmargin, baseline2-10) 
+plot_sumbar(mainlanguages, leftmargin, baseline2, 1, 400, 20, labels=labels, altfill= True, popout=True)
 
-selite(u"Puhutuimmat muut kielet, prosenttia", leftmargin, baseline2-10+70) 
+selite(u"Muiden kielten puhujien jakauma", leftmargin+256, baseline2-10+70) 
 plot_sumbar(seclanguages, leftmargin, baseline2+70, 1, 400, 20, labels=labels[2:], altfill= True)    
 
 
@@ -518,34 +554,40 @@ hz_hairline(baseline3-55)
 
 #---- Voting
 
+selite_bold(u"Vaalitulokset", leftmargin, baseline3-40)  
+
 curRow = None
 for row in voting.rows:
     if(row[0] == district): curRow = row
+try:
+    unzipped = zip(*sorted(zip(voting.header_row[1:-2], curRow[1:-2]), key=lambda x: -float(x[1])))
+    labels = list(unzipped[0])
+    rawvalues = list(unzipped[1])
+    labels.append(voting.header_row[-2])
+    rawvalues.append(curRow[-2])
 
-unzipped = zip(*sorted(zip(voting.header_row[1:-2], curRow[1:-2]), key=lambda x: -float(x[1])))
-labels = list(unzipped[0])
-rawvalues = list(unzipped[1])
-labels.append(voting.header_row[-2])
-rawvalues.append(curRow[-2])
 
-values = list()
-for x in rawvalues:
-    values.append(float(x))
+    values = list()
+    for x in rawvalues:
+        values.append(float(x))
 
-votingresults = cook_percentages(values, cutoff = 6)
-print votingresults
-
-selite_bold(u"Vaalitulokset", leftmargin, baseline3-40)  
-
-votingpercentage = str(curRow[-1])
-
-selite(u"Äänestystulokset eduskuntavaaleissa 2007, äänestysprosentti " + votingpercentage + " %", leftmargin, baseline3-10) 
-
-plot_sumbar(votingresults, leftmargin, baseline3, 1, 400, 20, labels=labels, altfill= True)
+    votingresults = cook_percentages(values, cutoff = 6)
 
 
 
-    
+    votingpercentage = str(curRow[-1])
+
+    selite(u"Äänestystulokset eduskuntavaaleissa 2007, äänestysprosentti " + votingpercentage + " %", leftmargin, baseline3-10) 
+
+    plot_sumbar(votingresults, leftmargin, baseline3, 1, 400, 20, labels=labels, altfill= True)
+
+except TypeError:
+    selite(u"Ei äänestystilastoja alueelta eduskuntavaaleissa 2007", leftmargin, baseline3-10) 
+
+
+selite(u"Informaatiomuotoilu.fi & Janne Aukia, 2012 \nTämän teos teoksen käyttöoikeutta koskee Creative Commons Nimeä-Tarttuva 3.0 Muokkaamaton -lisenssi.", leftmargin, baseline3+80, fontsz=8)
+
+
 #---- Map
 
 try:
@@ -585,7 +627,7 @@ stroke(1)
 
 nofill()
 drawpaths(paths[1:], scale=0.035)
-
+push()
 scale(0.035)
 stroke(1)
 strokewidth(35)
@@ -601,5 +643,12 @@ drawpath(p)
 fill(0)
 psz=25
 #text(keys[index], cx, cy-psz)
+pop()
+
+
+name = "localdata_"+ str(district) +"_"+ title  +".pdf"
+#canvas.save(name)
+
+
 
 
