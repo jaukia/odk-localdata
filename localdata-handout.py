@@ -1,12 +1,14 @@
 
 import csv
 import xml.dom.minidom as parser
-from math import sqrt, pi, ceil
+from math import sqrt, pi, ceil, floor
 
 size(210*mm, 297*mm)
 colormode(CMYK)
 
 fillclr = (color(1, 0, 0, 0.25))
+fillclrop = (color(1, 0, 0, 0.25, 0.4))
+
 fillclr50p = (color(0.5, 0, 0, 0.125))
 fillclr25p = (0, 0, 0, 0.25)
 fillclr15p = (color(0, 0, 0, 0.25, 0.5))
@@ -55,18 +57,22 @@ class Reader:
 # ------------ plotting functions -------------
 
 # Simple line graph
-def plot_line_horizontal(datarow, x, y, value_scale, spacing, range=10000, height=80): 
+def plot_line_horizontal(datarow, x, y, value_scale, spacing, height=45, scalestep=5000, range=2000): 
     points = []
     xs = 0
     print sum(datarow)
     average = float(sum(datarow)) / float(len(datarow))
     
-    maxval = int(max(datarow))
-    min_y = int(min(datarow))
+    #!FIXIT! Floor, ceil
+    maxval = int(ceil(max(datarow)+range)/scalestep)*scalestep
+    min_y = int(floor(min(datarow)-range)/scalestep)*scalestep
+    
+    vscalef = ((maxval-min_y)*value_scale)/height
+
     
     for entry in datarow:
             entry = float(entry)
-            ypos = (entry-min_y)*value_scale
+            ypos = ((entry-min_y)*value_scale)/vscalef
             points.append(Point(xs, ypos))
             xs +=spacing
     push()
@@ -78,8 +84,8 @@ def plot_line_horizontal(datarow, x, y, value_scale, spacing, range=10000, heigh
     line(0, 0, xs-spacing, 0)
     selite_align(format_number(min_y), -55, 3)
     
-    selite_align(format_number(maxval), -55, -(maxval-min_y)*value_scale+3)
-    line(0, -(maxval-min_y)*value_scale, xs-spacing, -(maxval-min_y)*value_scale)
+    selite_align(format_number(maxval), -55, -((maxval-min_y)*value_scale)/vscalef+3)
+    line(0, -((maxval-min_y)*value_scale/vscalef), xs-spacing, -((maxval-min_y)*value_scale)/vscalef)
 
     
     nofill()
@@ -473,7 +479,7 @@ for vuosi in vuodet:
     nostroke()
     rect(leftmargin+350+(vuosi-1)*5, baseline1+28, 2, 3)
     fill(fillclr0op)
-    rect(leftmargin+350+(27-1)*5, baseline1-5, 40, 25)
+    rect(leftmargin+350+(27-1)*5, baseline1-14, 40, 43)
 
     selite_align(str(popproject.header_row[vuosi]), leftmargin+326+(vuosi-1)*5, baseline1+42,  al=CENTER)
     
@@ -562,21 +568,28 @@ index = keys.index(district)
 #print index
 
 
-strokewidth(25)
-stroke(1)
-nofill()
-fill(0.95)
+
+
+fill(0.9)
 translate(340,10)
 drawpaths(paths[1:], scale=0.035)
+push()
 scale(0.035)
 
-fill(fillclr15p)
+fill(0.5)
 nostroke()
 drawpath(paths[0])
+pop()
+strokewidth(25)
+stroke(1)
 
+nofill()
+drawpaths(paths[1:], scale=0.035)
+
+scale(0.035)
 stroke(1)
 strokewidth(35)
-selectedclr = fillclr_red
+selectedclr = fillclrop
 fill(selectedclr)
 p = (paths[index])
 
