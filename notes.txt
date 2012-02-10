@@ -1,4 +1,6 @@
-This is a localdata visualization made by Jonatan Hild√©n at the Open Data Kitchen in Helsinki on Feb 2012. Some data mangling and preprosessing done by Janne Aukia. This is open source, for exact details, ask Jonatan.
+****
+This is a localdata visualization made by Jonatan Hildén at the Open Data Kitchen in Helsinki on Feb 2012. Some data mangling and preprosessing done by Janne Aukia. This is open source, for exact copyright details ask Jonatan.
+***
 
 For more info, see (in Finnish):
 http://informaatiomuotoilu.fi/2012/02/tietosivu-kaupunginosista/
