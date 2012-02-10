@@ -4,7 +4,8 @@ For more info, see (in Finnish):
 http://informaatiomuotoilu.fi/2012/02/tietosivu-kaupunginosista/
 
 Misc details:
-* this requires a hacked svg library to be installed into nodebox, see "hacked-svg-lib" for this
+* requires a hacked svg library to be installed into nodebox, see "hacked-svg-lib" for this
+* requires "PT Sans" to be installed on the machine, see "PT Sans" folder for the fonts
 
 Data sources (internal stuff):
 * "102.csv", source: "Helsinki_alueittain2011.xls"
