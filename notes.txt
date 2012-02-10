@@ -1,11 +1,13 @@
-* spoken languages data etc need to be in decreasing order, "others" as last item
+This is a localdata visualization made by Jonatan Hild√©n at the Open Data Kitchen in Helsinki on Feb 2012. Some data mangling and preprosessing done by Janne Aukia. This is open source, for exact details, ask Jonatan.
 
-* nodebox requires requires "svg" library
-* "svg" library needs to be hacked, use the hacked version by jonatan instead "hacked-svg-lib"
-* requires "PT Sans" font (see "PT Sans" folder)
+For more info, see (in Finnish):
+http://informaatiomuotoilu.fi/2012/02/tietosivu-kaupunginosista/
 
-* data sources:
-- "102.csv", source: "Helsinki_alueittain2011.xls"
-- "102_voting.csv", source: "parlimaentary_elections_helsinkiData_15.8.xls"
-- "102_population.csv", source: "Helsinki_alueittain2011.xls"
-- "102_languages.csv", source: "Väestö-äidinkieli-2011.xlsx"
+Misc details:
+* this requires a hacked svg library to be installed into nodebox, see "hacked-svg-lib" for this
+
+Data sources (internal stuff):
+* "102.csv", source: "Helsinki_alueittain2011.xls"
+* "102_voting.csv", source: "parlimaentary_elections_helsinkiData_15.8.xls"
+* "102_population.csv", source: "Helsinki_alueittain2011.xls"
+* "102_languages.csv", source: "Väestö-äidinkieli-2011.xlsx"
