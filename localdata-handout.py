@@ -406,10 +406,7 @@ regionnames = Reader(u"full-data/region-names.csv")
 
 regionnumbers = regionnames.columns[0]
 
-
-
-
-district = str(int(regionnumbers[33]))
+district = str(int(regionnumbers[31]))
 
 print district
 
